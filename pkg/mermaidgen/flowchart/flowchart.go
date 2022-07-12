@@ -12,11 +12,11 @@ const (
 )
 
 var (
-	OrientationTB = "TB"
-	OrientationTD = "TD"
-	OrientationBT = "BT"
-	OrientationRL = "RL"
-	OrientationLR = "LR"
+	OrientationTB = Orientation("TB")
+	OrientationTD = Orientation("TD")
+	OrientationBT = Orientation("BT")
+	OrientationRL = Orientation("RL")
+	OrientationLR = Orientation("LR")
 
 	ShapeBox = Shape{
 		StartChar: "[",
@@ -90,6 +90,13 @@ func (L *Link) String() string {
 	return L.Definition
 }
 
+func (L *Link) WithText(txt string) *Link {
+	r := L
+	r.Definition = r.Definition + fmt.Sprintf("|%s|", txt)
+
+	return r
+}
+
 func (L *Link) OutputInlineItem() string {
 	return L.String()
 }
@@ -122,7 +129,7 @@ func (flow *Flowchart) String() string {
 	var b bytes.Buffer
 
 	b.WriteString(ChartName)
-	b.WriteString(" TD")
+	b.WriteString(fmt.Sprintf(" %s", *flow.Orientation))
 	b.WriteString("\n")
 
 	for _, l := range flow.Lines {
@@ -136,7 +143,7 @@ func (flow *Flowchart) String() string {
 
 func New(o Orientation, ds *Shape) *Flowchart {
 	if o == "" {
-		o = Orientation(OrientationLR)
+		o = OrientationTB
 	}
 
 	if ds == nil {
